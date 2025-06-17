@@ -1,0 +1,313 @@
+﻿<Page x:Class="MyWpfApp.PaymentPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:local="clr-namespace:MyWpfApp"
+      mc:Ignorable="d"
+      Title="Оплата"
+      d:DesignHeight="800" d:DesignWidth="1200">
+
+    <Page.Resources>
+        <!-- Используем те же ресурсы, что и в MovieDetailsPage -->
+        <SolidColorBrush x:Key="PrimaryColor" Color="#FF1A1A2E"/>
+        <SolidColorBrush x:Key="SecondaryColor" Color="#16213E"/>
+        <SolidColorBrush x:Key="AccentColor" Color="#0F3460"/>
+        <SolidColorBrush x:Key="HighlightColor" Color="#E94560"/>
+        <SolidColorBrush x:Key="TextColor" Color="#F1F1F1"/>
+        <SolidColorBrush x:Key="DarkTextColor" Color="#333333"/>
+
+        <LinearGradientBrush x:Key="CinemaGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#FF1A1A2E" Offset="0"/>
+            <GradientStop Color="#16213E" Offset="0.5"/>
+            <GradientStop Color="#0F3460" Offset="1"/>
+        </LinearGradientBrush>
+
+        <!-- Анимация загрузки -->
+        <Storyboard x:Key="LoadingAnimation" RepeatBehavior="Forever">
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" 
+                             From="0" To="360" Duration="0:0:1" />
+        </Storyboard>
+
+        <!-- Стиль для кнопки "Назад" (аналогичный MovieDetailsPage) -->
+        <Style x:Key="BackButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="Transparent">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Path Data="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
+                              Fill="{TemplateBinding Foreground}"
+                              Stretch="Uniform"
+                              Width="20"
+                              Height="20"
+                              Margin="0,0,8,0"/>
+                                <ContentPresenter VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="{StaticResource HighlightColor}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для поля ввода в кинематографическом стиле -->
+        <Style x:Key="CinemaTextBoxStyle" TargetType="TextBox">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Background" Value="#22000000"/>
+            <Setter Property="BorderBrush" Value="#444"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="Margin" Value="0 8 0 16"/>
+            <Setter Property="CaretBrush" Value="{StaticResource HighlightColor}"/>
+            <Setter Property="SelectionBrush" Value="#550F3460"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="4"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="#666"/>
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource HighlightColor}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для плейсхолдера -->
+        <Style x:Key="CinemaPlaceholderText" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#777"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="16,12,0,0"/>
+            <Setter Property="IsHitTestVisible" Value="False"/>
+        </Style>
+
+        <!-- Стиль для кнопки оплаты -->
+        <Style x:Key="PayButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="200"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="{StaticResource HighlightColor}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}" 
+                                CornerRadius="8"
+                                RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform>
+                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                            </Border.RenderTransform>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Border.Effect>
+                                <DropShadowEffect Color="Black" Opacity="0.3" BlurRadius="10" ShadowDepth="3"/>
+                            </Border.Effect>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FFD43D5E"/>
+                                <Setter TargetName="border" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="1.03" ScaleY="1.03"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#FFC23552"/>
+                                <Setter TargetName="border" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="0.98" ScaleY="0.98"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <Grid>
+        <!-- Фоновое изображение с затемнением (как в MovieDetailsPage) -->
+        <Grid.Background>
+            <ImageBrush ImageSource="\pngtree-3d-abstract-violet-paper-cut-background-image_597668.jpg" Opacity="0.2" Stretch="UniformToFill"/>
+        </Grid.Background>
+
+        <Rectangle Fill="{StaticResource CinemaGradient}" Opacity="0.9"/>
+
+        <!-- Основной контент -->
+        <Grid>
+            <!-- Кнопка "Назад" в верхнем левом углу -->
+            <Button Content="Назад" 
+                    Style="{StaticResource BackButtonStyle}" 
+                    Click="BackButton_Click"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Margin="20"/>
+
+            <!-- Центральная панель оплаты -->
+            <Border Background="#22000000" 
+                    CornerRadius="12" 
+                    BorderBrush="#444" 
+                    BorderThickness="1"
+                    Width="500"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Padding="40"
+                    Margin="40">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" Opacity="0.5" BlurRadius="20" ShadowDepth="10"/>
+                </Border.Effect>
+
+                <StackPanel>
+                    <!-- Заголовок -->
+                    <TextBlock Text="ОПЛАТА БИЛЕТА"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               Foreground="{StaticResource TextColor}"
+                               HorizontalAlignment="Center"
+                               Margin="0 0 0 30">
+                        <TextBlock.Effect>
+                            <DropShadowEffect Color="Black" Opacity="0.5" BlurRadius="10" ShadowDepth="3"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+
+                    <!-- Сумма к оплате -->
+                    <TextBlock Name="AmountTextBlock"
+                               FontSize="20"
+                               Foreground="#FF4CAF50"
+                               Margin="0 0 0 30"
+                               HorizontalAlignment="Center"
+                               FontWeight="Bold"/>
+
+                    <!-- Номер карты -->
+                    <TextBlock Text="НОМЕР КАРТЫ" 
+                               FontSize="14" 
+                               Foreground="#AAAAAA"
+                               Margin="0 0 0 5"/>
+                    <Grid>
+                        <TextBox Name="CardNumberBox"
+                                 MaxLength="19"
+                                 Style="{StaticResource CinemaTextBoxStyle}"
+                                 PreviewTextInput="CardNumberBox_PreviewTextInput"
+                                 TextChanged="CardNumberBox_TextChanged"/>
+                        <TextBlock Text="XXXX XXXX XXXX XXXX"
+                                   Style="{StaticResource CinemaPlaceholderText}"
+                                   Visibility="{Binding Text.IsEmpty, ElementName=CardNumberBox}"/>
+                    </Grid>
+                    <TextBlock Name="CardNumberCounter"
+                               FontSize="11"
+                               Foreground="#777"
+                               Margin="0 0 0 10"
+                               Text="Введено: 0 из 16"/>
+
+                    <!-- Срок действия -->
+                    <TextBlock Text="СРОК ДЕЙСТВИЯ (MM/YY)" 
+                               FontSize="14" 
+                               Foreground="#AAAAAA"
+                               Margin="0 0 0 5"/>
+                    <TextBox Name="ExpiryBox"
+                             MaxLength="5"
+                             Style="{StaticResource CinemaTextBoxStyle}"
+                             PreviewTextInput="ExpiryBox_PreviewTextInput"
+                             TextChanged="ExpiryBox_TextChanged"/>
+                    <TextBlock FontSize="11"
+                               Foreground="#777"
+                               Text="Введите срок действия в формате MM/YY"
+                               Margin="0 0 0 10"/>
+
+                    <!-- CVC -->
+                    <TextBlock Text="CVC КОД" 
+                               FontSize="14" 
+                               Foreground="#AAAAAA"
+                               Margin="0 0 0 5"/>
+                    <PasswordBox Name="CvcBox"
+                                 MaxLength="3"
+                                 FontSize="16"
+                                 Padding="12"
+                                 Background="#22000000"
+                                 BorderBrush="#444"
+                                 BorderThickness="1"
+                                 Foreground="{StaticResource TextColor}"
+                                 Margin="0 8 0 0"
+                                 PreviewTextInput="CvcBox_PreviewTextInput"/>
+                    <TextBlock FontSize="11"
+                               Foreground="#777"
+                               Text="3 цифры на обратной стороне карты"
+                               Margin="0 0 0 30"/>
+
+                    <!-- Кнопка оплаты -->
+                    <Button Name="PayButton"
+                            Content="ОПЛАТИТЬ"
+                            Style="{StaticResource PayButtonStyle}"
+                            Click="PayButton_Click"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Оверлей загрузки (стилизованный под кинотеатр) -->
+            <Grid x:Name="LoadingOverlay" 
+                  Background="#80000000"
+                  Visibility="Collapsed"
+                  Panel.ZIndex="1000">
+                <Border Background="#220F3460" 
+                        CornerRadius="12" 
+                        BorderBrush="#444" 
+                        BorderThickness="1"
+                        Width="200"
+                        Height="200"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Ellipse Width="80" Height="80" 
+                                 Stroke="{StaticResource HighlightColor}" 
+                                 StrokeThickness="8"
+                                 StrokeDashArray="1, 2" 
+                                 StrokeDashCap="Round"
+                                 Margin="0 0 0 20">
+                            <Ellipse.RenderTransform>
+                                <RotateTransform Angle="0" CenterX="40" CenterY="40"/>
+                            </Ellipse.RenderTransform>
+                            <Ellipse.Triggers>
+                                <EventTrigger RoutedEvent="Ellipse.Loaded">
+                                    <BeginStoryboard Storyboard="{StaticResource LoadingAnimation}"/>
+                                </EventTrigger>
+                            </Ellipse.Triggers>
+                        </Ellipse>
+                        <TextBlock Text="Обработка платежа..." 
+                                   Foreground="{StaticResource TextColor}"
+                                   FontSize="16"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>

@@ -1,0 +1,197 @@
+﻿<Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="MyWpfApp.MainWindow"
+    Title="Кинотеатр" Height="600" Width="1000"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None" AllowsTransparency="True"
+    MouseLeftButtonDown="Window_MouseLeftButtonDown">
+
+    <Window.Resources>
+        <!-- Цветовая палитра -->
+        <SolidColorBrush x:Key="PrimaryColor" Color="#FF1A1A2E"/>
+        <SolidColorBrush x:Key="SecondaryColor" Color="#16213E"/>
+        <SolidColorBrush x:Key="AccentColor" Color="#0F3460"/>
+        <SolidColorBrush x:Key="HighlightColor" Color="#E94560"/>
+        <SolidColorBrush x:Key="TextColor" Color="#F1F1F1"/>
+        <SolidColorBrush x:Key="DarkTextColor" Color="#333333"/>
+
+        <!-- Кинотеатральный градиент -->
+        <LinearGradientBrush x:Key="CinemaGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#FF1A1A2E" Offset="0"/>
+            <GradientStop Color="#16213E" Offset="0.5"/>
+            <GradientStop Color="#0F3460" Offset="1"/>
+        </LinearGradientBrush>
+
+        <!-- Стиль для кнопок управления окном -->
+        <Style x:Key="WindowControlButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="20">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#20E94560"/>
+                    <Setter Property="Foreground" Value="{StaticResource HighlightColor}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Стиль для кнопок навигации -->
+        <Style x:Key="ModernButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{StaticResource AccentColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="10,5"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="Width" Value="180"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource HighlightColor}"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Анимация вращения лоадера -->
+        <Storyboard x:Key="LoadingAnimation" RepeatBehavior="Forever">
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" 
+                             From="0" To="360" Duration="0:0:1"/>
+        </Storyboard>
+    </Window.Resources>
+
+    <!-- Основной контейнер с фоновым изображением и градиентом -->
+    <Grid>
+        <Grid.Background>
+            <VisualBrush>
+                <VisualBrush.Visual>
+                    <Grid>
+                        <!-- Фоновое изображение -->
+                        <Image Source="\pngtree-3d-abstract-violet-paper-cut-background-image_597668.jpg" 
+                               Stretch="UniformToFill" Opacity="0.2"/>
+                        <!-- Градиентный оверлей -->
+                        <Rectangle Fill="{StaticResource CinemaGradient}" Opacity="0.9"/>
+                    </Grid>
+                </VisualBrush.Visual>
+            </VisualBrush>
+        </Grid.Background>
+
+        <!-- Панель управления окном -->
+        <DockPanel x:Name="TopBar" Background="{StaticResource PrimaryColor}" VerticalAlignment="Top" Height="40">
+            <TextBlock Text="CinemaLux" Foreground="{StaticResource TextColor}" 
+                       FontSize="18" FontWeight="Bold" Margin="15,0" VerticalAlignment="Center"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0">
+                <Button Style="{StaticResource WindowControlButtonStyle}" Click="MinimizeButton_Click" ToolTip="Свернуть">
+                    <TextBlock Text="─" FontSize="16" FontWeight="Bold"/>
+                </Button>
+                <Button x:Name="MaximizeButton" Style="{StaticResource WindowControlButtonStyle}" 
+                        Click="MaximizeButton_Click" ToolTip="Развернуть">
+                    <TextBlock Text="□" FontSize="14" FontWeight="Bold"/>
+                </Button>
+                <Button Style="{StaticResource WindowControlButtonStyle}" Click="CloseButton_Click" ToolTip="Закрыть">
+                    <TextBlock Text="✕" FontSize="16" FontWeight="Bold"/>
+                </Button>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Основная сетка -->
+        <Grid Margin="0,40,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Левый боковой бар -->
+            <Grid x:Name="LeftSidebar" Grid.Column="0" Background="#16213E">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Логотип -->
+                <StackPanel Grid.Row="0" Margin="10">
+                    <Image Source="models\i423.png" Width="180" Height="110" HorizontalAlignment="Center" Margin="0,10"/>
+                </StackPanel>
+
+                <!-- Навигационные кнопки -->
+                <StackPanel Grid.Row="1" VerticalAlignment="Top" Height="295" Grid.RowSpan="2">
+                    <Button Content="Фильмы 🎬" Style="{StaticResource ModernButtonStyle}" Click="MoviesButton_Click"/>
+                    <Button Content="Профиль 👤" Style="{StaticResource ModernButtonStyle}" Click="ProfileButton_Click"/>
+                    <Button Content="Мои билеты 🎟" Style="{StaticResource ModernButtonStyle}" Click="TicketsButton_Click"/>
+                    <Button Content="О нас ℹ️" Style="{StaticResource ModernButtonStyle}" Click="AboutButton_Click"/>
+                    <Button Content="Настройки ⚙️" Style="{StaticResource ModernButtonStyle}" Click="SettingsButton_Click"/>
+                </StackPanel>
+
+                <!-- Нижняя часть -->
+                <StackPanel Grid.Row="2" Margin="0,20,0,20">
+                    <Button x:Name="RegisterButton" Content="Зарегистрироваться" 
+                            Style="{StaticResource ModernButtonStyle}" Click="RegisterButton_Click" Margin="10,5"/>
+                    <Button x:Name="LoginButton" Content="Войти" 
+                            Style="{StaticResource ModernButtonStyle}" Click="LoginButton_Click" Margin="10,5"/>
+                    <Button x:Name="LogoutButton" Content="Выйти" 
+                            Style="{StaticResource ModernButtonStyle}" Click="LogoutButton_Click" 
+                            Visibility="Collapsed" Margin="10,5"/>
+                    <Button x:Name="AdminButton" Content="Админ-панель" 
+                            Style="{StaticResource ModernButtonStyle}" Click="AdminButton_Click" 
+                            Visibility="Collapsed" Margin="10,5"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Главный контент -->
+            <Grid Grid.Column="1" Background="Transparent">
+                <!-- Лоадер -->
+                <Border x:Name="LoadingContainer" Background="#80121212" 
+                        Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"
+                        Padding="20" CornerRadius="15" Panel.ZIndex="10">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Ellipse Width="50" Height="50" Stroke="{StaticResource HighlightColor}" StrokeThickness="5"
+                                 StrokeDashArray="2,3" StrokeDashCap="Round">
+                            <Ellipse.RenderTransform>
+                                <RotateTransform Angle="0" CenterX="25" CenterY="25"/>
+                            </Ellipse.RenderTransform>
+                            <Ellipse.Triggers>
+                                <EventTrigger RoutedEvent="Ellipse.Loaded">
+                                    <BeginStoryboard Storyboard="{StaticResource LoadingAnimation}"/>
+                                </EventTrigger>
+                            </Ellipse.Triggers>
+                        </Ellipse>
+                        <TextBlock Text="Упс! Нет подключения к интернету." 
+                                   Foreground="{StaticResource TextColor}" FontSize="18" 
+                                   VerticalAlignment="Center" FontWeight="Bold" Margin="10,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Фрейм для навигации -->
+                <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" Background="Transparent"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,150 @@
+﻿<Page x:Class="MyWpfApp.AboutPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      Title="О кинотеатре"
+      d:DesignHeight="800" d:DesignWidth="1200">
+
+    <Page.Resources>
+        <!-- Используем те же ресурсы, что и в других страницах -->
+        <SolidColorBrush x:Key="PrimaryColor" Color="#FF1A1A2E"/>
+        <SolidColorBrush x:Key="SecondaryColor" Color="#16213E"/>
+        <SolidColorBrush x:Key="AccentColor" Color="#0F3460"/>
+        <SolidColorBrush x:Key="HighlightColor" Color="#E94560"/>
+        <SolidColorBrush x:Key="TextColor" Color="#F1F1F1"/>
+
+        <!-- Стиль заголовков -->
+        <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="28"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="Margin" Value="0,0,0,25"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black" Direction="320" ShadowDepth="5" Opacity="0.5" BlurRadius="5"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль подзаголовков -->
+        <Style x:Key="SubHeaderTextStyle" TargetType="TextBlock" BasedOn="{StaticResource HeaderTextStyle}">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="Margin" Value="0,30,0,15"/>
+        </Style>
+
+        <!-- Стиль текста информации -->
+        <Style x:Key="ParagraphTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Margin" Value="20,10"/>
+            <Setter Property="LineHeight" Value="28"/>
+        </Style>
+
+        <!-- Стиль кнопки -->
+        <Style x:Key="ModernButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource HighlightColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="20,10"/>
+            <Setter Property="Margin" Value="0,30"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="25"
+                                Padding="20,10">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FFD23C57"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Стиль для списка особенностей -->
+        <Style x:Key="FeatureItemStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="Margin" Value="30,8,20,8"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+    </Page.Resources>
+
+    <!-- Фоновое изображение с затемнением -->
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="\pngtree-3d-abstract-violet-paper-cut-background-image_597668.jpg" Opacity="0.2" Stretch="UniformToFill"/>
+        </Grid.Background>
+
+        <Rectangle Fill="{StaticResource PrimaryColor}" Opacity="0.9"/>
+
+        <!-- Основное содержимое -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="40">
+            <StackPanel Margin="0,20,0,40" MaxWidth="1000">
+                <!-- Заголовок страницы -->
+                <TextBlock Text="О НАШЕМ КИНОТЕАТРЕ" 
+                           Style="{StaticResource HeaderTextStyle}"
+                           HorizontalAlignment="Center"/>
+
+                <!-- Описание кинотеатра -->
+                <TextBlock Text="Добро пожаловать в CinemaLux — одно из самых современных и уютных мест для наслаждения кинопремьерами и классикой! Мы предлагаем высококачественные фильмы в потрясающем формате и с комфортом для каждого гостя."
+                           Style="{StaticResource ParagraphTextStyle}"/>
+
+                <!-- Особенности -->
+                <TextBlock Text="НАШИ ОСОБЕННОСТИ:" 
+                           Style="{StaticResource SubHeaderTextStyle}"/>
+
+                <StackPanel>
+                    <TextBlock Text="• Современные кинозалы с высококачественными звуком и изображением" 
+                               Style="{StaticResource FeatureItemStyle}"/>
+                    <TextBlock Text="• Широкий выбор фильмов: от блокбастеров до независимого кино" 
+                               Style="{StaticResource FeatureItemStyle}"/>
+                    <TextBlock Text="• Комфортные кресла с подлокотниками и удобными подставками для напитков" 
+                               Style="{StaticResource FeatureItemStyle}"/>
+                    <TextBlock Text="• Кино для всей семьи: мультики, семейные фильмы и специальные детские сеансы" 
+                               Style="{StaticResource FeatureItemStyle}"/>
+                    <TextBlock Text="• Кафе и бар с горячими напитками, сладостями и легкими закусками" 
+                               Style="{StaticResource FeatureItemStyle}"/>
+                    <TextBlock Text="• Быстрое бронирование билетов через мобильное приложение" 
+                               Style="{StaticResource FeatureItemStyle}"/>
+                </StackPanel>
+
+                <!-- Кнопка для бронирования билетов -->
+                <Button Content="ЗАБРОНИРОВАТЬ БИЛЕТ" 
+                        Style="{StaticResource ModernButtonStyle}" 
+                        Click="BookTicketButton_Click"/>
+
+                <!-- Контакты -->
+                <TextBlock Text="КОНТАКТЫ" 
+                           Style="{StaticResource SubHeaderTextStyle}"/>
+
+                <StackPanel>
+                    <TextBlock Text="📍 Адрес: ул. Ленина, д. 1, Тулун" 
+                               Style="{StaticResource FeatureItemStyle}"/>
+                    <TextBlock Text="📞 Телефон: +7 950 100-13-50" 
+                               Style="{StaticResource FeatureItemStyle}"/>
+                    <TextBlock Text="🌐 Вебсайт: www.cinemalux.ru" 
+                               Style="{StaticResource FeatureItemStyle}"/>
+                    <TextBlock Text="📧 Email: info@cinemalux.ru" 
+                               Style="{StaticResource FeatureItemStyle}"/>
+                </StackPanel>
+
+                <!-- Заключительный текст -->
+                <TextBlock Text="Будем рады видеть вас в CinemaLux! Мы обещаем, что каждый сеанс у нас — это не только просмотр фильма, но и незабываемое удовольствие от атмосферы кино!" 
+                           Style="{StaticResource ParagraphTextStyle}" 
+                           Margin="20,30,20,0"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

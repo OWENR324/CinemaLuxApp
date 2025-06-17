@@ -1,0 +1,291 @@
+﻿<Page x:Class="MyWpfApp.TicketsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      Title="Мои билеты"
+      Background="Transparent"
+      mc:Ignorable="d">
+
+    <Page.Resources>
+        <!-- Цветовая палитра -->
+        <SolidColorBrush x:Key="PrimaryColor" Color="#FF1A1A2E"/>
+        <SolidColorBrush x:Key="SecondaryColor" Color="#16213E"/>
+        <SolidColorBrush x:Key="AccentColor" Color="#0F3460"/>
+        <SolidColorBrush x:Key="HighlightColor" Color="#E94560"/>
+        <SolidColorBrush x:Key="TextColor" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="DarkTextColor" Color="#333333"/>
+
+        <!-- Стиль кнопки "Вернуть билет" -->
+        <Style x:Key="DangerButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource HighlightColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="0,15,0,0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#D43A4F"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Стиль заголовка фильма -->
+        <Style x:Key="MovieTitleStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="22"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{StaticResource HighlightColor}"/>
+            <Setter Property="TextAlignment" Value="Left"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black" Direction="320" ShadowDepth="5" Opacity="0.3" BlurRadius="5"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль кнопки навигации -->
+        <Style x:Key="NavButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="Transparent">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Path Data="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
+                                      Fill="{TemplateBinding Foreground}"
+                                      Stretch="Uniform"
+                                      Width="18"
+                                      Height="18"
+                                      Margin="0,0,8,0"/>
+                                <ContentPresenter VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="{StaticResource HighlightColor}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Стиль карточки билета -->
+        <Style x:Key="TicketCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource SecondaryColor}"/>
+            <Setter Property="BorderBrush" Value="#444"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="10,0,10,20"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black" Opacity="0.2" BlurRadius="10" ShadowDepth="3"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#1E2A4A"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource HighlightColor}"/>
+                    <Trigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" To="1.02" Duration="0:0:0.1"/>
+                                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" To="1.02" Duration="0:0:0.1"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.EnterActions>
+                    <Trigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" To="1.0" Duration="0:0:0.2"/>
+                                <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" To="1.0" Duration="0:0:0.2"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.ExitActions>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Базовый стиль текста -->
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+
+        <!-- Стиль для заголовков полей -->
+        <Style x:Key="FieldHeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="17"/>
+        </Style>
+
+        <!-- Стиль для значений полей -->
+        <Style x:Key="FieldValueStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="8,0,0,6"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <!-- Стиль цены -->
+        <Style x:Key="PriceStyle" TargetType="TextBlock" BasedOn="{StaticResource FieldValueStyle}">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="17"/>
+        </Style>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="/pngtree-3d-abstract-violet-paper-cut-background-image_597668.jpg" Opacity="0.1" Stretch="UniformToFill"/>
+        </Grid.Background>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Шапка с кнопкой назад -->
+        <Border Grid.Row="0" Background="{StaticResource PrimaryColor}" Padding="20">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Content="Назад" Style="{StaticResource NavButtonStyle}" Click="BackButton_Click"/>
+                <TextBlock Text="Мои билеты" 
+                           Style="{StaticResource MovieTitleStyle}"
+                           Margin="20,0,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Список билетов -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="20,15">
+            <ItemsControl x:Name="TicketsList">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource TicketCardStyle}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Название фильма -->
+                                <TextBlock Text="{Binding MovieTitle}" 
+                                           Style="{StaticResource MovieTitleStyle}"
+                                           Grid.Row="0"/>
+
+                                <!-- Основная информация и QR-код -->
+                                <Grid Grid.Row="1" Margin="0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Информация о билете -->
+                                    <Grid Grid.Column="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <!-- Дата сеанса -->
+                                        <TextBlock Text="Дата сеанса:" 
+                                                   Grid.Row="0" Grid.Column="0"
+                                                   Style="{StaticResource FieldHeaderStyle}"/>
+                                        <TextBlock Text="{Binding SessionDatetime, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" 
+                                                   Grid.Row="0" Grid.Column="1"
+                                                   Style="{StaticResource FieldValueStyle}"/>
+
+                                        <!-- Зал -->
+                                        <TextBlock Text="Зал:" 
+                                                   Grid.Row="1" Grid.Column="0"
+                                                   Style="{StaticResource FieldHeaderStyle}"/>
+                                        <TextBlock Text="{Binding HallId}" 
+                                                   Grid.Row="1" Grid.Column="1"
+                                                   Style="{StaticResource FieldValueStyle}"/>
+
+                                        <!-- Место -->
+                                        <TextBlock Text="Место:" 
+                                                   Grid.Row="2" Grid.Column="0"
+                                                   Style="{StaticResource FieldHeaderStyle}"/>
+                                        <TextBlock Text="{Binding SeatNumber}" 
+                                                   Grid.Row="2" Grid.Column="1"
+                                                   Style="{StaticResource FieldValueStyle}"/>
+
+                                        <!-- Цена -->
+                                        <TextBlock Text="Цена:" 
+                                                   Grid.Row="3" Grid.Column="0"
+                                                   Style="{StaticResource FieldHeaderStyle}"/>
+                                        <TextBlock Text="{Binding Price, StringFormat='{}{0:F2} ₽'}" 
+                                                   Grid.Row="3" Grid.Column="1"
+                                                   Style="{StaticResource PriceStyle}"/>
+
+                                        <!-- Дата покупки -->
+                                        <TextBlock Text="Дата покупки:" 
+                                                   Grid.Row="4" Grid.Column="0"
+                                                   Style="{StaticResource FieldHeaderStyle}"/>
+                                        <TextBlock Text="{Binding PurchaseDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" 
+                                                   Grid.Row="4" Grid.Column="1"
+                                                   Style="{StaticResource FieldValueStyle}"/>
+                                    </Grid>
+
+                                    <!-- QR-код -->
+                                    <Image Source="{Binding QrCodeImage}"
+                                           Grid.Column="1"
+                                           Height="120"
+                                           Width="120"
+                                           Margin="15,0,0,0"
+                                           Stretch="Uniform"
+                                           Cursor="Hand"
+                                           MouseLeftButtonUp="QrCode_Click"/>
+                                </Grid>
+
+                                <!-- Кнопка "Вернуть билет" -->
+                                <Button Content="Вернуть билет" 
+                                        Grid.Row="3"
+                                        Click="RefundButton_Click" 
+                                        Tag="{Binding Id}" 
+                                        Style="{StaticResource DangerButtonStyle}"
+                                        Margin="0,15,0,0"
+                                        FontSize="16"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</Page>

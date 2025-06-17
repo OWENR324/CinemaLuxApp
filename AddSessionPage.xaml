@@ -1,0 +1,336 @@
+﻿<Page x:Class="MyWpfApp.AddSessionPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:local="clr-namespace:MyWpfApp"
+      mc:Ignorable="d"
+      Title="Добавить сеанс"
+      d:DesignHeight="800" d:DesignWidth="1200">
+
+    <Page.Resources>
+        <!-- Используем те же ресурсы, что и в MovieDetailsPage -->
+        <SolidColorBrush x:Key="PrimaryColor" Color="#FF1A1A2E"/>
+        <SolidColorBrush x:Key="SecondaryColor" Color="#16213E"/>
+        <SolidColorBrush x:Key="AccentColor" Color="#0F3460"/>
+        <SolidColorBrush x:Key="HighlightColor" Color="#E94560"/>
+        <SolidColorBrush x:Key="TextColor" Color="#F1F1F1"/>
+        <SolidColorBrush x:Key="DarkTextColor" Color="#333333"/>
+
+        <LinearGradientBrush x:Key="CinemaGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#FF1A1A2E" Offset="0"/>
+            <GradientStop Color="#16213E" Offset="0.5"/>
+            <GradientStop Color="#0F3460" Offset="1"/>
+        </LinearGradientBrush>
+
+        <!-- Стиль карточки -->
+        <Style x:Key="AdminCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="#22000000"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="BorderBrush" Value="#444"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black" Opacity="0.5" BlurRadius="10"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль заголовка -->
+        <Style x:Key="AdminHeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+        </Style>
+
+        <!-- Стиль метки формы -->
+        <Style x:Key="AdminFormLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#AAAAAA"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Width" Value="200"/>
+            <Setter Property="Margin" Value="0,0,10,0"/>
+        </Style>
+
+        <!-- Стиль кнопки "Назад" -->
+        <Style x:Key="BackButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="Transparent">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Path Data="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
+                                      Fill="{TemplateBinding Foreground}"
+                                      Stretch="Uniform"
+                                      Width="20"
+                                      Height="20"
+                                      Margin="0,0,8,0"/>
+                                <ContentPresenter VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="{StaticResource HighlightColor}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль элементов формы -->
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#333333"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="BorderBrush" Value="#555555"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Width" Value="300"/>
+            <Setter Property="Margin" Value="0,8"/>
+            <Setter Property="CaretBrush" Value="{StaticResource HighlightColor}"/>
+        </Style>
+
+        <!-- Стиль ComboBox -->
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="#333333"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="BorderBrush" Value="#555555"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Padding" Value="8,0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Width" Value="120"/>
+            <Setter Property="Margin" Value="0,8,10,8"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="#333333"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="{StaticResource AccentColor}"/>
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource HighlightColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="#888888"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль DatePicker -->
+        <Style TargetType="DatePicker">
+            <Setter Property="Background" Value="#333333"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="BorderBrush" Value="#555555"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Width" Value="300"/>
+            <Setter Property="Margin" Value="0,8"/>
+        </Style>
+
+        <Style TargetType="DatePickerTextBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DatePickerTextBox">
+                        <Grid>
+                            <Border x:Name="Border" 
+                                    Background="#333333"
+                                    CornerRadius="2">
+                                <Grid>
+                                    <ScrollViewer x:Name="PART_ContentHost"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Left"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль кнопки -->
+        <Style TargetType="Button" x:Key="PrimaryButton">
+            <Setter Property="Background" Value="{StaticResource HighlightColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#D93E4E"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#C23745"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <!-- Фоновое изображение с затемнением -->
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="\pngtree-3d-abstract-violet-paper-cut-background-image_597668.jpg" Opacity="0.2" Stretch="UniformToFill"/>
+        </Grid.Background>
+
+        <Rectangle Fill="{StaticResource CinemaGradient}" Opacity="0.9"/>
+
+        <Grid Margin="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Шапка с кнопкой назад -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="0,0,0,16">
+                <Button Content="Назад" Style="{StaticResource BackButton}" Click="BackButton_Click"/>
+                <TextBlock Text="Добавить сеанс" 
+                           FontSize="24" 
+                           FontWeight="Bold" 
+                           Foreground="{StaticResource TextColor}" 
+                           VerticalAlignment="Center" 
+                           Margin="16,0,0,0"/>
+            </StackPanel>
+
+            <!-- Форма добавления сеанса -->
+            <Border Grid.Row="1" Style="{StaticResource AdminCardStyle}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel>
+                        <!-- Поле для выбора фильма -->
+                        <StackPanel Orientation="Horizontal" Margin="0,8">
+                            <TextBlock Text="Фильм:" Style="{StaticResource AdminFormLabel}"/>
+                            <ComboBox x:Name="MoviesComboBox" Width="300" Foreground="Black"/>
+                        </StackPanel>
+
+                        <!-- Поле для выбора зала -->
+                        <StackPanel Orientation="Horizontal" Margin="0,8">
+                            <TextBlock Text="Зал:" Style="{StaticResource AdminFormLabel}"/>
+                            <ComboBox x:Name="HallComboBox" Width="120" Foreground="Black">
+                                <ComboBoxItem Content="Зал 1" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="Зал 2" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="Зал 3" Foreground="{StaticResource TextColor}"/>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <!-- Поле для даты -->
+                        <StackPanel Orientation="Horizontal" Margin="0,8">
+                            <TextBlock Text="Дата сеанса:" Style="{StaticResource AdminFormLabel}"/>
+                            <DatePicker x:Name="SessionDatePicker" Width="300" Height="40"/>
+                        </StackPanel>
+
+                        <!-- Поле для времени -->
+                        <StackPanel Orientation="Horizontal" Margin="0,8">
+                            <TextBlock Text="Время сеанса:" Style="{StaticResource AdminFormLabel}"/>
+                            <ComboBox x:Name="HourComboBox" SelectedIndex="12" Foreground="Black">
+                                <ComboBoxItem Content="00" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="01" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="02" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="03" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="04" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="05" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="06" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="07" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="08" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="09" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="10" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="11" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="12" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="13" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="14" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="15" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="16" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="17" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="18" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="19" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="20" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="21" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="22" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="23" Foreground="{StaticResource TextColor}"/>
+                            </ComboBox>
+                            <TextBlock Text=":" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#AAAAAA"/>
+                            <ComboBox x:Name="MinuteComboBox" SelectedIndex="0" Foreground="Black">
+                                <ComboBoxItem Content="00" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="05" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="10" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="15" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="20" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="25" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="30" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="35" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="40" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="45" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="50" Foreground="{StaticResource TextColor}"/>
+                                <ComboBoxItem Content="55" Foreground="{StaticResource TextColor}"/>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <!-- Поле для цены -->
+                        <StackPanel Orientation="Horizontal" Margin="0,8">
+                            <TextBlock Text="Цена:" Style="{StaticResource AdminFormLabel}"/>
+                            <TextBox x:Name="SessionPriceTextBox" Width="300"/>
+                        </StackPanel>
+
+                        <!-- Кнопка добавления сеанса -->
+                        <Button Content="Добавить сеанс" 
+                                Style="{StaticResource PrimaryButton}" 
+                                HorizontalAlignment="Center" 
+                                Width="200" 
+                                Margin="0,24,0,0" 
+                                Click="AddSessionButton_Click"
+                                FontWeight="Bold"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>
